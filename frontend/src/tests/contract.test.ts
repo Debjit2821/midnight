@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { contract, computeCredentialHash } from '../../../managed/contract';
-import type { PrivateWitness } from '../../../managed/contract';
+import { contract, computeCredentialHash } from '../managed/contract';
+import type { PrivateWitness } from '../managed/contract';
 
 describe('Midnight Credential Vault Contract Circuits & Privacy Tests', () => {
   // Test data Setup

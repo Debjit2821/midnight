@@ -20,7 +20,7 @@ export const Dashboard: React.FC = () => {
       if (witness) {
         list.push({
           ...c,
-          privateWitness: witness
+          privateWitness: witness as any
         });
       }
     }

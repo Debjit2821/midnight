@@ -1,6 +1,5 @@
-// Midnight.js SDK service wrapping contract circuits in Live and Simulated modes
-import { contract, computeCredentialHash } from '../../../managed/contract';
-import type { PrivateWitness } from '../../../managed/contract';
+import { contract, computeCredentialHash } from '../managed/contract';
+import type { PrivateWitness } from '../managed/contract';
 
 export interface CredentialRecord {
   id: string; // string-serialized bigint for json safety
@@ -85,7 +84,7 @@ export class MidnightSDKService {
   private saveSimulatedLedger() {
     try {
       const records: CredentialRecord[] = [];
-      contract.simulator.ledger.credentials.forEach((val, key) => {
+      contract.simulator.ledger.credentials.forEach((val: any, key: any) => {
         records.push({
           id: key.toString(),
           credentialHash: this.bytesToHex(val.credentialHash),
@@ -106,7 +105,7 @@ export class MidnightSDKService {
   async getCredentials(): Promise<CredentialRecord[]> {
     this.loadSimulatedLedger();
     const list: CredentialRecord[] = [];
-    contract.simulator.ledger.credentials.forEach((val, key) => {
+    contract.simulator.ledger.credentials.forEach((val: any, key: any) => {
       list.push({
         id: key.toString(),
         credentialHash: this.bytesToHex(val.credentialHash),
@@ -192,7 +191,7 @@ export class MidnightSDKService {
       privateWitness: {
         ...witness,
         salt: this.bytesToHex(salt)
-      }
+      } as any
     };
   }
 
