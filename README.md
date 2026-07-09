@@ -1,5 +1,7 @@
 # Midnight Credential Vault
 
+[![Midnight Credential Vault CI/CD](https://github.com/Debjit2821/midnight/actions/workflows/ci.yml/badge.svg)](https://github.com/Debjit2821/midnight/actions/workflows/ci.yml)
+
 A privacy-first decentralized credential verification platform built on the **Midnight Network** utilizing **Compact Smart Contracts**, **Zero-Knowledge Proofs (ZKPs)**, and **Midnight.js SDK**.
 
 ---
@@ -28,7 +30,7 @@ The **Midnight Credential Vault** is a decentralized, privacy-preserving credent
 ![Successful Compilation](docs/screenshots/compilation_success.png)
 
 ### 3. Passing Automated Contract & Privacy Tests
-*Vitest executing 11 passing tests validating circuit logic, ZK proof checks, and privacy protection.*
+*Vitest executing 14 passing tests validating circuit logic, ZK proof checks, and privacy protection.*
 ![Passing Tests](docs/screenshots/tests_passing.png)
 
 ### 4. Lace Wallet Connect Flow
