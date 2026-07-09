@@ -1,0 +1,118 @@
+pragma language_version >= 0.23;
+import CompactStandardLibrary;
+
+// The public credential structure stored on the ledger
+export struct PublicCredential {
+    credentialHash: Bytes<32>,
+    issuer: Address,
+    credentialType: Opaque<"string">,
+    issueDate: Uint<64>,
+    revoked: Boolean,
+    verificationCount: Uint<64>
+}
+
+// Global ledger state tracking issued credentials by a unique ID
+export ledger credentials: Map<Uint<64>, PublicCredential>;
+
+constructor() {
+    // Initialize ledger state
+}
+
+// Circuit: Issue a new credential
+export circuit issueCredential(
+    id: Uint<64>,
+    hash: Bytes<32>,
+    type: Opaque<"string">,
+    date: Uint<64>
+): [] {
+    // Assert credential ID is unique
+    assert(!credentials.member(id), "Credential already exists");
+    
+    // Write public credential data to the ledger
+    credentials[id] = PublicCredential {
+        credentialHash: hash,
+        issuer: caller,
+        credentialType: type,
+        issueDate: date,
+        revoked: false,
+        verificationCount: 0
+    };
+}
+
+// Circuit: Verify credential validity
+export circuit verifyCredential(id: Uint<64>): Boolean {
+    assert(credentials.member(id), "Credential does not exist");
+    const cred = credentials[id];
+    assert(!cred.revoked, "Credential is revoked");
+    return true;
+}
+
+// Circuit: Verify private witness ownership using zero-knowledge proofs
+export circuit proveOwnership(
+    id: Uint<64>,
+    ownerName: Opaque<"string">,
+    studentID: Opaque<"string">,
+    employeeID: Opaque<"string">,
+    email: Opaque<"string">,
+    dateOfBirth: Opaque<"string">,
+    documentMetadata: Opaque<"string">,
+    secretVerificationData: Opaque<"string">,
+    salt: Bytes<32>
+): Boolean {
+    assert(credentials.member(id), "Credential does not exist");
+    const cred = credentials[id];
+    assert(!cred.revoked, "Credential is revoked");
+
+    // Cryptographically hash the private witness details together with the salt
+    const computedHash = persistentHash([
+        ownerName,
+        studentID,
+        employeeID,
+        email,
+        dateOfBirth,
+        documentMetadata,
+        secretVerificationData,
+        salt
+    ]);
+
+    // Check if the computed hash matches the public hash commitment
+    assert(cred.credentialHash == computedHash, "Invalid private witness details");
+    return true;
+}
+
+// Circuit: Revoke a credential (only callable by the issuer)
+export circuit revokeCredential(id: Uint<64>): [] {
+    assert(credentials.member(id), "Credential does not exist");
+    const cred = credentials[id];
+    
+    // Ensure caller is the authorized issuer
+    assert(cred.issuer == caller, "Only the issuer can revoke");
+    assert(!cred.revoked, "Credential is already revoked");
+
+    // Mark as revoked on the public ledger
+    credentials[id] = PublicCredential {
+        credentialHash: cred.credentialHash,
+        issuer: cred.issuer,
+        credentialType: cred.credentialType,
+        issueDate: cred.issueDate,
+        revoked: true,
+        verificationCount: cred.verificationCount
+    };
+}
+
+// Circuit: Increment the verification counter of a credential
+export circuit incrementVerification(id: Uint<64>): [] {
+    assert(credentials.member(id), "Credential does not exist");
+    const cred = credentials[id];
+    assert(!cred.revoked, "Credential is revoked");
+
+    // Increment count on the public ledger
+    credentials[id] = PublicCredential {
+        credentialHash: cred.credentialHash,
+        issuer: cred.issuer,
+        credentialType: cred.credentialType,
+        issueDate: cred.issueDate,
+        revoked: cred.revoked,
+        verificationCount: cred.verificationCount + 1
+    };
+}
