@@ -56,11 +56,11 @@ async function capture() {
   await page.click('button:has-text("Dashboard")');
   await page.waitForTimeout(1000);
   
-  console.log('Generating Zero-Knowledge Proof...');
-  await page.click('button:has-text("Generate Zero-Knowledge Proof")');
+  console.log('Generating Zero-Knowledge Proof with Email Disclosure...');
+  await page.click('button:has-text("Prove & Disclose Email")');
   // Wait for ZK Prover loader to finish
   await page.waitForSelector('.loading-overlay', { state: 'detached', timeout: 10000 });
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(1000);
   
   // Take screenshot showing the generated ZK proof signature box
   await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'privacy_demonstration.png') });
@@ -72,7 +72,7 @@ async function capture() {
   // 5. Verify Credential and Privacy Audit list
   console.log('Navigating to Verification Portal...');
   await page.click('button:has-text("Verification")');
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(1000);
 
   await page.fill('input[name="id"]', '1042');
   await page.fill('textarea', proofText);
@@ -81,7 +81,7 @@ async function capture() {
   await page.click('button:has-text("Verify Credential validity")');
   // Wait for verification loader
   await page.waitForSelector('.loading-overlay', { state: 'detached', timeout: 5000 });
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(1500);
 
   // Take screenshot showing successful verification and the privacy audit checklist
   await page.screenshot({ path: path.join(SCREENSHOTS_DIR, 'credential_verified.png') });

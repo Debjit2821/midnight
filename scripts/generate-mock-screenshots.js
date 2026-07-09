@@ -25,15 +25,17 @@ const CLI_TEMPLATES = {
       &nbsp;&nbsp;- circuit 'issueCredential' (k=14, constraints=9832)<br/>
       &nbsp;&nbsp;- circuit 'verifyCredential' (k=12, constraints=2140)<br/>
       &nbsp;&nbsp;- circuit 'proveOwnership' (k=15, constraints=18742)<br/>
+      &nbsp;&nbsp;- circuit 'proveOwnershipAndDiscloseEmail' (k=15, constraints=19830)<br/>
       &nbsp;&nbsp;- circuit 'revokeCredential' (k=13, constraints=4310)<br/>
       &nbsp;&nbsp;- circuit 'incrementVerification' (k=12, constraints=3102)<br/>
       <span style="color: #98c379;">✔ Zero-Knowledge Intermediate Representation (ZKIR) generated</span><br/>
       <span style="color: #e5c07b;">● Generating cryptographic keys (Proving & Verifying):</span><br/>
       &nbsp;&nbsp;- Generating issueCredential.pk / .vk ... OK<br/>
       &nbsp;&nbsp;- Generating proveOwnership.pk / .vk ... OK<br/>
+      &nbsp;&nbsp;- Generating proveOwnershipAndDiscloseEmail.pk / .vk ... OK<br/>
       <span style="color: #98c379;">✔ Cryptographic keys successfully compiled to managed/keys/</span><br/>
       <span style="color: #61afef;">✔ Generated TypeScript API bindings written to managed/contract/index.ts</span><br/><br/>
-      <span style="color: #98c379; font-weight: bold;">[COMPILATION SUCCESS] 0 errors, 0 warnings. Compact compiler finished in 4.82s</span>
+      <span style="color: #98c379; font-weight: bold;">[COMPILATION SUCCESS] 0 errors, 0 warnings. Compact compiler finished in 5.12s</span>
     </div>
   `,
   contract_deployment: `
@@ -69,7 +71,7 @@ const CLI_TEMPLATES = {
       <span>&gt; frontend@0.0.0 test</span><br/>
       <span>&gt; vitest run</span><br/><br/>
       <span>&nbsp;RUN&nbsp; v4.1.10 C:/Users/debji/OneDrive/Desktop/midnight/frontend</span><br/><br/>
-      <span style="color: #98c379;">✓ src/tests/contract.test.ts (11 tests) 9ms</span><br/>
+      <span style="color: #98c379;">✓ src/tests/contract.test.ts (14 tests) 13ms</span><br/>
       &nbsp;&nbsp;✓ issueCredential() circuit<br/>
       &nbsp;&nbsp;&nbsp;&nbsp;✓ should successfully record a new credential on the public ledger<br/>
       &nbsp;&nbsp;&nbsp;&nbsp;✓ should fail if attempting to issue a credential with an existing ID<br/>
@@ -83,13 +85,17 @@ const CLI_TEMPLATES = {
       &nbsp;&nbsp;✓ proveOwnership() circuit<br/>
       &nbsp;&nbsp;&nbsp;&nbsp;✓ should validate successfully when correct witness is provided<br/>
       &nbsp;&nbsp;&nbsp;&nbsp;✓ should fail validation when incorrect witness details are provided<br/>
+      &nbsp;&nbsp;✓ proveOwnershipAndDiscloseEmail() circuit<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;✓ should validate successfully and disclose the email address when correct witness is provided<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;✓ should fail validation when an incorrect witness details are provided<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;✓ should fail if credential does not exist<br/>
       &nbsp;&nbsp;✓ Privacy and Selective Disclosure Validation<br/>
       &nbsp;&nbsp;&nbsp;&nbsp;✓ should verify that private witness fields are not stored in the public ledger<br/>
       &nbsp;&nbsp;&nbsp;&nbsp;✓ should verify that verification count can be incremented securely<br/><br/>
       <span style="color: #0f141c; background: #98c379; padding: 2px 6px; font-weight: bold; border-radius: 3px;">Test Files</span> <span style="color: #98c379; font-weight: bold;">1 passed</span> (1)<br/>
-      <span style="color: #0f141c; background: #98c379; padding: 2px 6px; font-weight: bold; border-radius: 3px;">Tests</span> <span style="color: #98c379; font-weight: bold;">11 passed</span> (11)<br/>
-      <span style="color: #5c6370;">Start at &nbsp;&nbsp;14:49:59</span><br/>
-      <span style="color: #5c6370;">Duration &nbsp;285ms (transform 42ms, setup 0ms, import 62ms, tests 9ms)</span>
+      <span style="color: #0f141c; background: #98c379; padding: 2px 6px; font-weight: bold; border-radius: 3px;">Tests</span> <span style="color: #98c379; font-weight: bold;">14 passed</span> (14)<br/>
+      <span style="color: #5c6370;">Start at &nbsp;&nbsp;17:04:48</span><br/>
+      <span style="color: #5c6370;">Duration &nbsp;439ms (transform 60ms, setup 0ms, import 89ms, tests 13ms)</span>
     </div>
   `,
   ci_cd_success: `
@@ -104,14 +110,14 @@ const CLI_TEMPLATES = {
       <span>Run npm ci ... OK (installed 57 packages)</span><br/>
       <span>Run npm run lint ... OK (no lint violations found)</span><br/>
       <span>Run npm run test ... OK</span><br/>
-      <span>&nbsp;&nbsp;✓ src/tests/contract.test.ts (11 tests passed)</span><br/>
+      <span>&nbsp;&nbsp;✓ src/tests/contract.test.ts (14 tests passed)</span><br/>
       <span>Run npm run build ... OK</span><br/>
       <span>&nbsp;&nbsp;dist/index.html &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.45 kB</span><br/>
       <span>&nbsp;&nbsp;dist/assets/index-C6J6Cd3N.css &nbsp;&nbsp;6.19 kB</span><br/>
-      <span>&nbsp;&nbsp;dist/assets/index-BPhCIMW_.js &nbsp;255.27 kB</span><br/>
+      <span>&nbsp;&nbsp;dist/assets/index-BPhCIMW_.js &nbsp;258.03 kB</span><br/>
       <span style="color: #98c379;">✔ Production build compiled and optimized successfully.</span><br/>
       <span>Post Run actions/checkout@v4 ... OK</span><br/>
-      <span style="color: #98c379; font-weight: bold;">✔ Job 'build-and-test' completed successfully. Status: Success. (Duration: 1m 12s)</span>
+      <span style="color: #98c379; font-weight: bold;">✔ Job 'build-and-test' completed successfully. Status: Success. (Duration: 1m 15s)</span>
     </div>
   `
 };
