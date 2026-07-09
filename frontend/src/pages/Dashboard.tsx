@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useMidnight } from '../contexts/MidnightContext';
 import { midnightSDKService } from '../services/sdk';
 import type { CredentialRecord } from '../services/sdk';
-import { Shield, Eye, EyeOff, Award, Copy, Check, Cpu } from 'lucide-react';
+import { Shield, Eye, EyeOff, Award, Copy, Check, Cpu, Mail } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const { credentials, generateOwnershipProof, addToast, isLoading } = useMidnight();
+  const { credentials, generateOwnershipProof, generateOwnershipProofAndDiscloseEmail, addToast, isLoading } = useMidnight();
   const [myCredentials, setMyCredentials] = useState<CredentialRecord[]>([]);
   const [selectedId, setSelectedId] = useState<string>('');
   const [showPrivate, setShowPrivate] = useState<Record<string, boolean>>({});
@@ -39,6 +39,19 @@ export const Dashboard: React.FC = () => {
     setGeneratedProof('');
     try {
       const result = await generateOwnershipProof(record.id, record.privateWitness);
+      if (result.isValid) {
+        setGeneratedProof(result.proof);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleGenerateProofAndDiscloseEmail = async (record: CredentialRecord) => {
+    if (!record.privateWitness) return;
+    setGeneratedProof('');
+    try {
+      const result = await generateOwnershipProofAndDiscloseEmail(record.id, record.privateWitness);
       if (result.isValid) {
         setGeneratedProof(result.proof);
       }
@@ -237,14 +250,24 @@ export const Dashboard: React.FC = () => {
 
                   {/* Prover Action */}
                   <div className="pt-4 border-t border-white-5 flex flex-wrap gap-4 items-center justify-between">
-                    <button
-                      onClick={() => handleGenerateProof(selectedRecord)}
-                      disabled={isLoading || selectedRecord.revoked}
-                      className="btn btn-primary flex items-center gap-2"
-                    >
-                      <Cpu className="w-4 h-4" />
-                      <span>{isLoading ? 'Generating ZK Proof...' : 'Generate Zero-Knowledge Proof'}</span>
-                    </button>
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        onClick={() => handleGenerateProof(selectedRecord)}
+                        disabled={isLoading || selectedRecord.revoked}
+                        className="btn btn-primary flex items-center gap-2"
+                      >
+                        <Cpu className="w-4 h-4" />
+                        <span>{isLoading ? 'Generating Proof...' : 'Prove Anonymously'}</span>
+                      </button>
+                      <button
+                        onClick={() => handleGenerateProofAndDiscloseEmail(selectedRecord)}
+                        disabled={isLoading || selectedRecord.revoked}
+                        className="btn btn-secondary flex items-center gap-2 border border-violet-500/30 hover:border-violet-500/60"
+                      >
+                        <Mail className="w-4 h-4 text-violet-400" />
+                        <span>{isLoading ? 'Generating Proof...' : 'Prove & Disclose Email'}</span>
+                      </button>
+                    </div>
                     {selectedRecord.revoked && (
                       <span className="text-xs text-red-400 font-semibold">Cannot prove ownership of a revoked credential.</span>
                     )}

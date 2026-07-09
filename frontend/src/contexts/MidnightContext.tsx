@@ -26,6 +26,7 @@ interface MidnightContextType {
   issueNewCredential: (id: string, type: string, witness: any) => Promise<void>;
   verifyExistingCredential: (id: string) => Promise<boolean>;
   generateOwnershipProof: (id: string, witness: any) => Promise<{ proof: string; isValid: boolean }>;
+  generateOwnershipProofAndDiscloseEmail: (id: string, witness: any) => Promise<{ proof: string; isValid: boolean; disclosedEmail: string }>;
   revokeExistingCredential: (id: string) => Promise<void>;
 }
 
@@ -81,11 +82,25 @@ export const MidnightProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setMode(nextMode);
     addToast(`Switched to ${nextMode === 'live' ? 'Live Wallet Mode' : 'Ledger Simulation Mode'}`, 'info');
   };
-
   const connectWallet = async () => {
     setIsLoading(true);
     setActiveTxStatus('Connecting to Lace Wallet...');
     try {
+      if (mode === 'demo') {
+        // Mock connection for demo/simulation mode
+        await new Promise(resolve => setTimeout(resolve, 800));
+        const mockAddress = '0x4f88b89812f8413158c5a242c75a4e3b1c6a7e32';
+        setWallet({
+          address: mockAddress,
+          networkId: 'preprod',
+          isConnected: true,
+          isInstalled: true, // mock as installed for simulator
+        });
+        midnightSDKService.setCaller(mockAddress);
+        addToast('Connected to Mock Lace Wallet (Simulator)!', 'success');
+        return;
+      }
+
       if (!laceWalletService.isInstalled()) {
         addToast('Lace Wallet extension is not installed.', 'error');
         setWallet(prev => ({ ...prev, isInstalled: false }));
@@ -112,7 +127,9 @@ export const MidnightProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const disconnectWallet = async () => {
-    await laceWalletService.disconnect();
+    if (mode === 'live') {
+      await laceWalletService.disconnect();
+    }
     setWallet({
       address: '',
       networkId: '',
@@ -123,7 +140,6 @@ export const MidnightProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setMode('demo');
     addToast('Disconnected wallet. Switched to Simulation Mode.', 'info');
   };
-
   const refreshCredentials = async () => {
     try {
       const list = await midnightSDKService.getCredentials();
@@ -190,6 +206,29 @@ export const MidnightProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   };
 
+  const generateOwnershipProofAndDiscloseEmail = async (id: string, witness: any) => {
+    setIsLoading(true);
+    setActiveTxStatus('Connecting to Proof Server & generating zero-knowledge proof with selective disclosure...');
+    try {
+      const result = await midnightSDKService.proveOwnershipAndDiscloseEmail(id, witness);
+      if (result.isValid) {
+        addToast('ZK proof generated! Owner email disclosed.', 'success');
+        // Update verification count as part of mock workflow
+        await midnightSDKService.incrementVerification(id);
+        await refreshCredentials();
+      } else {
+        addToast('Invalid credential witness details.', 'error');
+      }
+      return result;
+    } catch (err: any) {
+      addToast(err.message || 'Proof generation failed', 'error');
+      throw err;
+    } finally {
+      setIsLoading(false);
+      setActiveTxStatus('');
+    }
+  };
+
   const revokeExistingCredential = async (id: string) => {
     setIsLoading(true);
     setActiveTxStatus('Submitting revocation transaction to the blockchain...');
@@ -224,6 +263,7 @@ export const MidnightProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         issueNewCredential,
         verifyExistingCredential,
         generateOwnershipProof,
+        generateOwnershipProofAndDiscloseEmail,
         revokeExistingCredential,
       }}
     >

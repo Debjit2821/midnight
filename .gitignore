@@ -1,0 +1,7 @@
+node_modules/
+.env
+dist/
+.vercel
+.oxlintrc.json
+frontend/dist/
+frontend/node_modules/

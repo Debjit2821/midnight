@@ -133,6 +133,29 @@ export const contract = {
       return true;
     },
 
+    proveOwnershipAndDiscloseEmail(
+      id: bigint,
+      witness: PrivateWitness
+    ): string {
+      const ledger = this.ledger;
+      const cred = ledger.credentials.get(id);
+      if (!cred) {
+        throw new Error("Compact VM Assertion Failed: Credential does not exist");
+      }
+      if (cred.revoked) {
+        throw new Error("Compact VM Assertion Failed: Credential is revoked");
+      }
+
+      // Recompute and verify the cryptographic commitment hash
+      const computedHash = computeCredentialHash(witness);
+      const isMatch = cred.credentialHash.every((val, index) => val === computedHash[index]);
+      
+      if (!isMatch) {
+        throw new Error("Compact VM Assertion Failed: Invalid private witness details");
+      }
+      return witness.email;
+    },
+
     revokeCredential(caller: string, id: bigint): void {
       const ledger = this.ledger;
       const cred = ledger.credentials.get(id);

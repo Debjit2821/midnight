@@ -7,7 +7,7 @@ A privacy-first decentralized credential verification platform built on the **Mi
 ## 🔗 Project Links
 
 *   **GitHub Repository**: [Debjit2821/midnight](https://github.com/Debjit2821/midnight)
-*   **Live Demo (Mocked/Simulated)**: [Midnight Credential Vault Demo](https://level3-midnight.vercel.app/)
+*   **Live Demo (Mocked/Simulated)**: [Midnight Credential Vault Demo](https://frontend-eosin-six-66.vercel.app/)
 
 ---
 
@@ -95,7 +95,9 @@ The Midnight Credential Vault ensures **rational privacy** by dividing informati
     *   `dateOfBirth` (Birth date).
     *   `secretVerificationData` (Secret key).
     *   `salt` (Cryptographic salt).
-3.  **Selective Disclosure**: Users run the Compact proving circuit locally. The Prover Server checks the private witness details against the public commitment, and outputs a ZK proof signature confirming credential ownership without exposing any of the private fields.
+3.  **Selective Disclosure**: Users run the Compact proving circuit locally. The Prover Server checks the private witness details against the public commitment, and outputs a ZK proof signature.
+    *   *Standard Proving*: Confirming credential ownership without exposing any of the private witness fields.
+    *   *Selective Email Disclosure*: Using the `disclose(email)` keyword dynamically inside our contract's `proveOwnershipAndDiscloseEmail` circuit. This allows a user to prove credential validity while selectively disclosing ONLY their email address to the verifier, leaving all other private fields (e.g. name, date of birth, IDs) completely hidden.
 
 ### 🔍 What an Observer Can and Cannot Learn
 

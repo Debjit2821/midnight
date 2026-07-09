@@ -41,15 +41,31 @@ export const VerifyCredential: React.FC = () => {
 
       // 2. Validate that the proof string matches our pattern (simulated prover verification)
       const expectedPrefix = `zk-proof-vault-${credId}-`;
-      const isProofValid = proofInput.trim().startsWith(expectedPrefix) && proofInput.trim().endsWith('-validated');
+      const proofTrimmed = proofInput.trim();
+      const isDiscloseEmailProof = proofTrimmed.startsWith(expectedPrefix) && proofTrimmed.includes('-disclose-email-') && proofTrimmed.endsWith('-validated');
+      const isNormalProof = proofTrimmed.startsWith(expectedPrefix) && !proofTrimmed.includes('-disclose-email-') && proofTrimmed.endsWith('-validated');
 
-      if (isProofValid) {
+      if (isNormalProof || isDiscloseEmailProof) {
+        let disclosedEmail = '';
+        if (isDiscloseEmailProof) {
+          const witness = midnightSDKService.getPrivateWitness(credId);
+          disclosedEmail = witness ? witness.email : 'unknown@domain.com';
+        }
+
         setVerificationResult({
           verified: true,
           checked: true,
-          details: details
+          details: {
+            ...details,
+            disclosedEmail: disclosedEmail
+          }
         });
-        addToast('Verification Successful! Credential validity confirmed by ZK-Proof.', 'success');
+        addToast(
+          isDiscloseEmailProof 
+            ? 'Verification Successful! Credential verified & email address disclosed.'
+            : 'Verification Successful! Credential validity confirmed by ZK-Proof.', 
+          'success'
+        );
       } else {
         setVerificationResult({
           verified: false,
@@ -149,6 +165,12 @@ export const VerifyCredential: React.FC = () => {
                               <span className="font-bold text-slate-100">{verificationResult.details.verificationCount} times verified</span>
                             </div>
                           </div>
+                          {verificationResult.details.disclosedEmail && (
+                            <div className="bg-violet-950/20 border border-violet-500/20 rounded-xl p-3 mt-3">
+                              <span className="text-violet-400 font-bold block text-xs mb-1">🔓 SELECTIVE DISCLOSURE: Disclosed Email</span>
+                              <span className="text-slate-200 font-semibold font-mono">{verificationResult.details.disclosedEmail}</span>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

@@ -184,6 +184,44 @@ describe('Midnight Credential Vault Contract Circuits & Privacy Tests', () => {
     });
   });
 
+  // 4b. Test Selective Disclosure Proof Verification
+  describe('proveOwnershipAndDiscloseEmail() circuit', () => {
+    it('should validate successfully and disclose the email address when correct witness is provided', () => {
+      const issueDate = BigInt(Date.now());
+      contract.simulator.issueCredential(
+        issuerAddress,
+        credId,
+        credHash,
+        'Academic Degree',
+        issueDate
+      );
+
+      const disclosedEmail = contract.simulator.proveOwnershipAndDiscloseEmail(credId, defaultWitness);
+      expect(disclosedEmail).toBe(defaultWitness.email);
+    });
+
+    it('should fail validation when an incorrect witness details are provided', () => {
+      const issueDate = BigInt(Date.now());
+      contract.simulator.issueCredential(
+        issuerAddress,
+        credId,
+        credHash,
+        'Academic Degree',
+        issueDate
+      );
+
+      expect(() => {
+        contract.simulator.proveOwnershipAndDiscloseEmail(credId, alternateWitness);
+      }).toThrowError('Invalid private witness details');
+    });
+
+    it('should fail if credential does not exist', () => {
+      expect(() => {
+        contract.simulator.proveOwnershipAndDiscloseEmail(9999n, defaultWitness);
+      }).toThrowError('Credential does not exist');
+    });
+  });
+
   // 5. Test Privacy Validation
   describe('Privacy and Selective Disclosure Validation', () => {
     it('should verify that private witness fields are not stored in the public ledger state', () => {

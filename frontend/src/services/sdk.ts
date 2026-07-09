@@ -235,6 +235,35 @@ export class MidnightSDKService {
     }
   }
 
+  // 3b. proveOwnershipAndDiscloseEmail()
+  async proveOwnershipAndDiscloseEmail(
+    id: string,
+    witness: Omit<PrivateWitness, 'salt'> & { salt: string }
+  ): Promise<{ proof: string; isValid: boolean; disclosedEmail: string }> {
+    const bigintId = BigInt(id);
+    const fullWitness: PrivateWitness = {
+      ...witness,
+      salt: this.hexToBytes(witness.salt)
+    };
+
+    if (this.isSimulated) {
+      // Simulate heavy ZK-SNARK proving process (prover server)
+      await new Promise(resolve => setTimeout(resolve, 2500));
+
+      try {
+        const disclosedEmail = contract.simulator.proveOwnershipAndDiscloseEmail(bigintId, fullWitness);
+        // Return a mock cryptographic proof signature with 'disclose-email' marker
+        const mockProof = `zk-proof-vault-${id}-${this.bytesToHex(fullWitness.salt).substr(0, 16)}-disclose-email-validated`;
+        return { proof: mockProof, isValid: true, disclosedEmail };
+      } catch (err) {
+        return { proof: '', isValid: false, disclosedEmail: '' };
+      }
+    } else {
+      // Live Prover Server proof generation
+      throw new Error('Live Mode proof generation requires Proof Server API');
+    }
+  }
+
   // 4. revokeCredential()
   async revokeCredential(id: string): Promise<void> {
     const bigintId = BigInt(id);

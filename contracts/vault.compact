@@ -30,10 +30,10 @@ export circuit issueCredential(
     
     // Write public credential data to the ledger
     credentials[id] = PublicCredential {
-        credentialHash: hash,
+        credentialHash: disclose(hash),
         issuer: caller,
-        credentialType: type,
-        issueDate: date,
+        credentialType: disclose(type),
+        issueDate: disclose(date),
         revoked: false,
         verificationCount: 0
     };
@@ -78,6 +78,41 @@ export circuit proveOwnership(
     // Check if the computed hash matches the public hash commitment
     assert(cred.credentialHash == computedHash, "Invalid private witness details");
     return true;
+}
+
+// Circuit: Prove ownership AND deliberately disclose the owner's email address
+export circuit proveOwnershipAndDiscloseEmail(
+    id: Uint<64>,
+    ownerName: Opaque<"string">,
+    studentID: Opaque<"string">,
+    employeeID: Opaque<"string">,
+    email: Opaque<"string">,
+    dateOfBirth: Opaque<"string">,
+    documentMetadata: Opaque<"string">,
+    secretVerificationData: Opaque<"string">,
+    salt: Bytes<32>
+): Opaque<"string"> {
+    assert(credentials.member(id), "Credential does not exist");
+    const cred = credentials[id];
+    assert(!cred.revoked, "Credential is revoked");
+
+    // Cryptographically hash the private witness details together with the salt
+    const computedHash = persistentHash([
+        ownerName,
+        studentID,
+        employeeID,
+        email,
+        dateOfBirth,
+        documentMetadata,
+        secretVerificationData,
+        salt
+    ]);
+
+    // Check if the computed hash matches the public hash commitment
+    assert(cred.credentialHash == computedHash, "Invalid private witness details");
+
+    // Deliberately disclose the email address
+    return disclose(email);
 }
 
 // Circuit: Revoke a credential (only callable by the issuer)
