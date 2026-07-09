@@ -11,6 +11,12 @@ A privacy-first decentralized credential verification platform built on the **Mi
 
 ---
 
+## 💡 Initial Product Idea & Scoped Proposal
+
+The **Midnight Credential Vault** is a decentralized, privacy-preserving credential issuance and verification platform designed to replace vulnerable public database checks and unencrypted PDF exchanges. Universities and professional institutions act as *Issuers*, registering credentials on the public ledger as cryptographic commitments. Credential *Holders* (e.g., graduates, employees) receive their personal, unredacted records as local *Private Witnesses* and can dynamically generate Zero-Knowledge Proofs (ZKPs) off-chain. Third-party *Verifiers* (e.g., corporate recruiters, compliance officers) check these proofs against the ledger to confirm credential validity instantly, ensuring complete student/employee confidentiality.
+
+---
+
 ## 📸 Screenshots & Proof of Architecture
 
 ### 1. Landing Portal & Interactive Playground
@@ -76,13 +82,13 @@ The Midnight Credential Vault ensures **rational privacy** by dividing informati
 ```
 
 1.  **Public State**: Variables recorded on the public blockchain ledger that are visible to all nodes:
-    *   `credentialHash` (32-byte hash commitment of the private fields).
+    *   `credentialHash` (32-byte Poseidon/SHA-256 hash commitment of the private fields).
     *   `issuer` (Address of the registering organization).
-    *   `credentialType` (Class classification of credential).
+    *   `credentialType` (Class classification of credential, e.g., "Academic Degree").
     *   `issueDate` (Issuance Unix timestamp).
-    *   `revoked` (Boolean flag).
-    *   `verificationCount` (Integer counting verifications).
-2.  **Private Witness**: Sensitive holder fields processed strictly off-chain:
+    *   `revoked` (Boolean flag representing revocation status).
+    *   `verificationCount` (Integer counting total verifications).
+2.  **Private Witness**: Sensitive holder fields processed strictly off-chain and never revealed:
     *   `ownerName` (Legal full name).
     *   `studentID` / `employeeID` (Unique identifiers).
     *   `email` (Contact email).
@@ -90,6 +96,21 @@ The Midnight Credential Vault ensures **rational privacy** by dividing informati
     *   `secretVerificationData` (Secret key).
     *   `salt` (Cryptographic salt).
 3.  **Selective Disclosure**: Users run the Compact proving circuit locally. The Prover Server checks the private witness details against the public commitment, and outputs a ZK proof signature confirming credential ownership without exposing any of the private fields.
+
+### 🔍 What an Observer Can and Cannot Learn
+
+#### 👁 What an Observer Can Learn (Publicly Observable)
+*   **Validity Status**: Whether a credential corresponding to a specific numeric ID is active, valid, or revoked.
+*   **Issuing Authority**: The public wallet address of the organization that issued and signed the credential.
+*   **Classification**: The category of the credential (e.g. *Academic Degree* or *Professional Certification*).
+*   **Verification Usage**: The cumulative number of times the credential has been verified (though *who* verified it or *when* remains anonymous).
+*   **Cryptographic Commitment**: The 32-byte public hash commitment representing the credential data.
+
+#### 🔒 What an Observer Cannot Learn (Shielded & Confidential)
+*   **Holder Identity**: The owner's name, email address, date of birth, student ID, or employee ID.
+*   **Verification Trace**: Which specific user generated a ZK proof or which third-party verified it. No wallet addresses of the credential holders are ever linked to the public credential ID on the ledger.
+*   **Raw Content Secrets**: The secret keys, salts, and specific grade or document metadata used to generate the commitment hash.
+*   **Correlation**: Linking multiple credentials to the same holder is impossible since each ZK proof is generated off-chain using local witnesses and custom salts, preventing linkability.
 
 ---
 
