@@ -57,6 +57,10 @@ The **Midnight Credential Vault** is a decentralized, privacy-preserving credent
 ### 9. Contract Deployment Trace
 *Transaction receipt showing the Compact contract deploying successfully on the Midnight Preprod network.*
 ![Contract Deployment](docs/screenshots/contract_deployment.png)
+### 9. CI/CD Verification and Vitest report 
+*its varified and it passed 14 tests*
+![ci/cd and test](docs/Screenshot 2026-07-09 184418.png)
+
 
 
 
