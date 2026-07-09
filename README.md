@@ -10,6 +10,7 @@ A privacy-first decentralized credential verification platform built on the **Mi
 
 *   **GitHub Repository**: [Debjit2821/midnight](https://github.com/Debjit2821/midnight)
 *   **Live Demo (Mocked/Simulated)**: [Midnight Credential Vault Demo](https://frontend-eosin-six-66.vercel.app/)
+*   **Demo**: [Demo](https://youtu.be/p2cVU4ouU2I)
 
 ---
 
