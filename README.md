@@ -57,6 +57,10 @@ The **Midnight Credential Vault** is a decentralized, privacy-preserving credent
 *Transaction receipt showing the Compact contract deploying successfully on the Midnight Preprod network.*
 ![Contract Deployment](docs/screenshots/contract_deployment.png)
 
+### 10. Interactive Demo Walkthrough (Video)
+*High-fidelity screen recording demonstrating Lace wallet connection flow, credential issuance, prover execution, and selective disclosure verification.*
+![Demo Walkthrough Video](docs/demo_walkthrough.webp)
+
 ---
 
 ## ⛓ Deployed Addresses (Midnight Preprod)
