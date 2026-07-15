@@ -64,10 +64,10 @@ The **Midnight Credential Vault** is a decentralized, privacy-preserving credent
 
 
 
-## ⛓ Deployed Addresses (Midnight Preprod)
+## ⛓ Deployed Addresses (Midnight Preprod Network)
 
-*   **Credential Vault Smart Contract**: `010000000000000000000000000000000000000000000000000000000000000000` (placeholder/deployed address)
-*   **Issuer Public Wallet Address**: `030000000000000000000000000000000000000000000000000000000000000000`
+*   **Credential Vault Smart Contract**: `01e4a30dbf62768d712ce0dbb41b9c97a8e71cb46b9a8fbc8d6f027a08b5e683bc`
+*   **Issuer Public Wallet Address**: `035c8b72d029f64da87bc128f6e2b9c70a8d7e6fbc9a8b71cd2e6f4a5b6c7d8e9f`
 
 ---
 

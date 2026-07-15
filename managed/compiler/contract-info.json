@@ -1,0 +1,55 @@
+{
+  "compilerVersion": "0.23.0",
+  "languageVersion": "0.23.0",
+  "contractName": "MidnightCredentialVault",
+  "circuits": [
+    {
+      "name": "issueCredential",
+      "publicInputs": ["id", "hash", "type", "date"],
+      "privateInputs": []
+    },
+    {
+      "name": "verifyCredential",
+      "publicInputs": ["id"],
+      "privateInputs": []
+    },
+    {
+      "name": "proveOwnership",
+      "publicInputs": ["id"],
+      "privateInputs": [
+        "ownerName",
+        "studentID",
+        "employeeID",
+        "email",
+        "dateOfBirth",
+        "documentMetadata",
+        "secretVerificationData",
+        "salt"
+      ]
+    },
+    {
+      "name": "proveOwnershipAndDiscloseEmail",
+      "publicInputs": ["id"],
+      "privateInputs": [
+        "ownerName",
+        "studentID",
+        "employeeID",
+        "email",
+        "dateOfBirth",
+        "documentMetadata",
+        "secretVerificationData",
+        "salt"
+      ]
+    },
+    {
+      "name": "revokeCredential",
+      "publicInputs": ["id"],
+      "privateInputs": []
+    },
+    {
+      "name": "incrementVerification",
+      "publicInputs": ["id"],
+      "privateInputs": []
+    }
+  ]
+}

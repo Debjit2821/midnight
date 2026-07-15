@@ -56,7 +56,7 @@ const CLI_TEMPLATES = {
       <span>Waiting for block confirmations...</span><br/>
       <span style="color: #98c379;">✔ Block confirmed! Block height: 492104</span><br/><br/>
       <span style="color: #98c379; font-weight: bold;">🎉 Contract successfully deployed to Midnight Preprod!</span><br/>
-      <span style="color: #61afef; font-weight: bold;">Deployed Contract Address: 010000000000000000000000000000000000000000000000000000000000000000</span><br/>
+      <span style="color: #61afef; font-weight: bold;">Deployed Contract Address: 01e4a30dbf62768d712ce0dbb41b9c97a8e71cb46b9a8fbc8d6f027a08b5e683bc</span><br/>
       <span style="color: #5c6370;">State synchronized. Client configurations updated.</span>
     </div>
   `,

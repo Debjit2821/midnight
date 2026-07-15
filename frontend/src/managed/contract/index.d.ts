@@ -37,6 +37,7 @@ export const contract: {
     issueCredential(caller: string, id: bigint, hash: Uint8Array, type: string, date: bigint): void;
     verifyCredential(id: bigint): boolean;
     proveOwnership(id: bigint, witness: PrivateWitness): boolean;
+    proveOwnershipAndDiscloseEmail(id: bigint, witness: PrivateWitness): string;
     revokeCredential(caller: string, id: bigint): void;
     incrementVerification(id: bigint): void;
   };
