@@ -9,7 +9,7 @@ A privacy-first decentralized credential verification platform built on the **Mi
 ## 🔗 Project Links
 
 *   **GitHub Repository**: [Debjit2821/midnight](https://github.com/Debjit2821/midnight)
-*   **Live Demo (Mocked/Simulated)**: [Midnight Credential Vault Demo](https://frontend-eosin-six-66.vercel.app/)
+*   **Frontend demo**: [Midnight Credential Vault Demo](https://frontend-eosin-six-66.vercel.app/)
 *   **Demo**: [Demo](https://youtu.be/p2cVU4ouU2I)
 
 ---
@@ -61,13 +61,27 @@ The **Midnight Credential Vault** is a decentralized, privacy-preserving credent
 *its varified and it passed 14 tests*
 ![ci/cd and test](https://github.com/Debjit2821/midnight/blob/main/docs/Screenshot%202026-07-09%20184418.png)
 
+## ⛓ Deployed Addresses (Midnight Preprod Testnet)
 
+The frontend environment and deployment documentation use the following Midnight Preprod identifiers.
 
+> The Subscan links below are direct lookups. The official explorer can be used from its [search page](https://explorer.preprod.midnight.network).
 
-## ⛓ Deployed Addresses (Midnight Preprod Network)
+*   **Credential Vault Smart Contract (configured contract)**:
+    *   **Subscan Explorer**: [View contract](https://midnight-preprod.subscan.io/contract/mn_contract_preprod18drh4lwsxzzkxrq2ljngnwsv6hatgadulk0qy868a8qws6v3vn8q84ppwl)
+    *   **Alternative Explorer Links**: [Official Explorer](https://explorer.preprod.midnight.network/contract/mn_contract_preprod18drh4lwsxzzkxrq2ljngnwsv6hatgadulk0qy868a8qws6v3vn8q84ppwl) | [TexLabs Explorer](https://preprod.midnightexplorer.com/contract/mn_contract_preprod18drh4lwsxzzkxrq2ljngnwsv6hatgadulk0qy868a8qws6v3vn8q84ppwl)
+    *   **Bech32m Format**: `mn_contract_preprod18drh4lwsxzzkxrq2ljngnwsv6hatgadulk0qy868a8qws6v3vn8q84ppwl`
+    *   **Raw Hex Format**: `3b477afdd03085630c0afca689ba0cd5fab475bcfd9e021f47e9c0e8699164ce`
+    *   **01-Prefixed Hex Format**: `013b477afdd03085630c0afca689ba0cd5fab475bcfd9e021f47e9c0e8699164ce`
 
-*   **Credential Vault Smart Contract**: `01e4a30dbf62768d712ce0dbb41b9c97a8e71cb46b9a8fbc8d6f027a08b5e683bc`
-*   **Issuer Public Wallet Address**: `035c8b72d029f64da87bc128f6e2b9c70a8d7e6fbc9a8b71cd2e6f4a5b6c7d8e9f`
+*   **Issuing Authority (signing wallet)**:
+    *   **Subscan Explorer**: [View issuer account](https://midnight-preprod.subscan.io/account/mn_addr_preprod1l8aq3n0mv6g8zpztycw0xznhxg0ux4wpxctrry4dwy36zcprnhzs53a8js)
+    *   **Alternative Explorer Links**: [Official Explorer](https://explorer.preprod.midnight.network/address/mn_addr_preprod1l8aq3n0mv6g8zpztycw0xznhxg0ux4wpxctrry4dwy36zcprnhzs53a8js) | [TexLabs Explorer](https://preprod.midnightexplorer.com/address/mn_addr_preprod1l8aq3n0mv6g8zpztycw0xznhxg0ux4wpxctrry4dwy36zcprnhzs53a8js)
+    *   **Bech32m Format**: `mn_addr_preprod1l8aq3n0mv6g8zpztycw0xznhxg0ux4wpxctrry4dwy36zcprnhzs53a8js`
+    *   **Raw Hex Format**: `e1a00861fb8600e1204b86c0e34277c2e183a1c1c6606182adc1214100236541`
+    *   **03-Prefixed Hex Format**: `03e1a00861fb8600e1204b86c0e34277c2e183a1c1c6606182adc1214100236541`
+
+There is intentionally no public receiving/holder address: the Compact contract persists the issuer and a credential commitment, not a recipient identity. The holder receives the private witness out of band and proves possession with `proveOwnership`; publishing a holder address would weaken that privacy guarantee.
 
 ---
 
@@ -186,16 +200,58 @@ Open `http://localhost:5173` in your browser.
 
 ---
 
-## 🚀 Deployment Guide (Preprod)
+## 🚀 Deployment Guide (Preprod Testnet)
 
-If your local environment has WSL2 and Docker running the proof server daemon:
-1.  Compile the Compact contract:
-    ```bash
-    compact compile contracts/vault.compact managed/
-    ```
-2.  Launch the local proof server:
-    ```bash
-    docker run -d -p 8080:8080 midnightntwrk/proof-server:latest
-    ```
-3.  Configure `.env` with your endpoints and fund your Lace wallet with Preprod `tNIGHT` faucet tokens.
-4.  Toggle off **Demo Mode** in the header to connect live and sign contract transactions.
+Follow these steps to build and deploy the Compact contract to Midnight Preprod:
+
+### 1. Prerequisites
+Ensure you have the following installed and configured on your machine:
+*   **WSL2** (for Windows users) with **Docker Desktop** running.
+*   **Node.js 18+** and **npm** installed.
+*   **Lace Wallet Browser Extension** installed and funded with `tNIGHT` tokens from the [Midnight Preprod Faucet](https://docs.midnight.network/).
+
+### 2. Compile the Compact Contract
+Compile the Compact smart contract to generate type-safe bindings, WebAssembly targets, and ZK circuits:
+```bash
+# Using the Midnight compact compiler CLI
+npx @midnight-ntwrk/compactc compile contracts/vault.compact -o managed/
+```
+This generates the Compiled Contract schemas and ZK circuits in the `managed/` folder.
+
+### 3. Start the Local Proof Server Daemon
+The off-chain zero-knowledge proving circuits must be processed by a local proof server. Start the Docker container:
+```bash
+docker run -d -p 8080:8080 midnightntwrk/proof-server:latest
+```
+Ensure the server is running on `http://localhost:8080`.
+
+### 4. Configure Environment Variables
+Copy the environment templates:
+```bash
+cp .env.example .env
+cp frontend/.env.example frontend/.env
+```
+Ensure `MIDNIGHT_PROVER_URL` is set to `http://localhost:8080` and the Node/Indexer URLs point to the official Preprod endpoints. The frontend reads the `VITE_` variables in `frontend/.env`; root variables are not exposed to the browser.
+
+### 5. Execute Smart Contract Deployment
+Install the SDK dependencies in the root folder and run the deployment script:
+```bash
+npm install
+node scripts/deploy-contract.js
+```
+The script will:
+1. Connect to your local proof server and wallet provider daemon.
+2. Submit the deployment transaction to the Midnight Preprod Network.
+3. Automatically update `.env` and `frontend/.env` with the newly generated contract address.
+
+### 6. Verify Deployment on Block Explorers
+After a new deployment, replace the contract id consistently in `.env`, `frontend/.env`, both environment examples, and the deployed-address section above. Do not publish an address until the deployment transaction can be inspected in an explorer.
+
+### 7. Run Frontend Live Mode
+Start the frontend development server:
+```bash
+cd frontend
+npm install
+npm run dev
+```
+In the web interface header, toggle **Demo Mode** to **Off (Live Wallet Mode)**. The app will connect to your connected Lace Wallet and queries the ledger state directly from the deployed contract address on the blockchain!
